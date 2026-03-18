@@ -1,0 +1,14 @@
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { FolderOpen } from 'lucide-react'
+
+export default function ProjectDetail() {
+  const { id } = useParams<{ id: string }>()
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4">
+      <FolderOpen className="w-16 h-16 text-gray-300 dark:text-gray-600" />
+      <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-300">פרטי פרויקט #{id}</h1>
+      <p className="text-gray-500 dark:text-gray-400">דף זה בפיתוח</p>
+    </div>
+  )
+}
