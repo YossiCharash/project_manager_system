@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --green: #16a34a;
+  --red: #dc2626;
+  --yellow: #ca8a04;
+  
+  /* Design system colors */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 94.1%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    direction: rtl;
+    /* Dynamic base font size for responsive clamp() */
+    font-size: clamp(14px, 2vw, 16px);
+  }
+  body {
+    @apply bg-background text-foreground;
+    direction: rtl;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Prevent mid-word break in UI; break only between words */
+    word-break: keep-all;
+    overflow-wrap: normal;
+    text-align: right;
+  }
+
+  /* Long-form content (descriptions, notes) may break words if needed */
+  .text-content-long {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Ensure Hebrew text wraps at word boundaries, not mid-word */
+  [dir="rtl"],
+  body[dir="rtl"] * {
+    direction: rtl;
+    text-align: right;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    hyphens: none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Prevent text from breaking mid-word (labels, buttons, short UI text) */
+  .text-no-break-mid {
+    word-break: keep-all;
+    white-space: nowrap;
+  }
+  .text-wrap-words {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* Flex container: children wrap as whole blocks, don't shrink */
+  .layout-wrap-blocks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .layout-wrap-blocks > * {
+    flex-shrink: 0;
+    min-width: fit-content;
+  }
+}
+
+/* Mobile: reduce padding and font size below 768px */
+@media (max-width: 767px) {
+  .project-detail-page {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .project-detail-card,
+  .project-detail-section {
+    padding: 0.75rem 1rem !important;
+  }
+  .project-detail-heading {
+    font-size: clamp(0.9rem, 4vw, 1.125rem) !important;
+  }
+  .project-detail-body {
+    font-size: clamp(0.8125rem, 2.5vw, 0.9375rem) !important;
+  }
+  .project-detail-button {
+    padding: 0.5rem 0.75rem !important;
+    font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Smooth transitions */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Task calendar: פגישה vs משימה – הבדל ויזואלי (overrides in TaskCalendar.css inside .task-calendar-wrap) */
+.fc-event-meeting {
+  border-left-width: 6px !important;
+  border-left-style: solid !important;
+  border-left-color: rgba(0, 0, 0, 0.5) !important;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.dark .fc-event-meeting {
+  border-left-color: rgba(255, 255, 255, 0.7) !important;
+}
+.fc-event-task {
+  border-width: 2px !important;
+  border-style: dashed !important;
+  border-color: inherit;
+  border-radius: 4px;
+  opacity: 0.92;
+}
