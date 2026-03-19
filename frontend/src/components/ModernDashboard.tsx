@@ -484,7 +484,7 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit: _onProj
   })
   const [startDate, setStartDate] = useState<string>('')
   const [endDate, setEndDate] = useState<string>('')
-  const [profitabilityAlerts, setProfitabilityAlerts] = useState<Array<{
+  const [, setProfitabilityAlerts] = useState<Array<{
     id: number
     name: string
     profit_margin: number
@@ -495,7 +495,7 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit: _onProj
     parent_project_id: number | null
   }>>([])
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<number>>(new Set())
-  const [selectedAlerts, setSelectedAlerts] = useState<Set<number>>(new Set())
+  useState<Set<number>>(new Set())
   const [showRestoreDialog, setShowRestoreDialog] = useState(false)
   const [, setAlertsLoading] = useState(false)
   const [projectsByStatusOpen, setProjectsByStatusOpen] = useState(false)
