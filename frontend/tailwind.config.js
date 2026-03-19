@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ['class'],
   content: [
     './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -46,6 +46,40 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
+        'scale-in': 'scaleIn 0.2s ease-out',
+      },
+      fontSize: {
+        'fluid-sm': 'clamp(0.8125rem, 2vw + 0.5rem, 0.875rem)',
+        'fluid-base': 'clamp(0.875rem, 2vw + 0.5rem, 1rem)',
+        'fluid-lg': 'clamp(1rem, 2vw + 0.5rem, 1.125rem)',
+        'fluid-xl': 'clamp(1.125rem, 2vw + 0.5rem, 1.25rem)',
+        'fluid-2xl': 'clamp(1.25rem, 3vw + 0.5rem, 1.5rem)',
+      },
+      screens: {
+        'narrow': '767px',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
       },
     },
   },

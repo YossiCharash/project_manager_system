@@ -1,82 +1,44 @@
-import React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import type { RootState } from '../../store'
-import { selectHasAnyAccess } from '../../store/slices/permissionsSlice'
-import { Logo } from './Logo'
-import { cn } from '../../lib/utils'
+import React, { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
   FolderOpen,
-  BarChart2,
-  FileText,
-  Truck,
-  Settings,
+  BarChart3,
   Users,
-  ShieldCheck,
-  ClipboardList,
-  Package,
-  ChevronRight,
-  ChevronLeft,
+  Settings,
+  Menu,
   X,
+  ChevronLeft,
+  ChevronRight,
+  Home,
+  FileText,
+  Building2,
+  UserCog,
+  Activity,
+  Receipt,
+  ClipboardList,
+  Bell,
+  BookOpen,
+  Package,
+  SlidersHorizontal
 } from 'lucide-react'
+import { useTheme } from '../../contexts/ThemeContext'
+import { cn } from '../../lib/utils'
+import { useSelector, useDispatch } from 'react-redux'
+import type { RootState, AppDispatch } from '../../store'
+import { fetchUnreadCount } from '../../store/slices/notificationsSlice'
+import type { Permission } from '../../store/slices/permissionsSlice'
+import { Logo } from './Logo'
 
-interface NavItem {
-  label: string
-  to: string
-  icon: React.ReactNode
-  resource?: string
+interface NavigationItem {
+  name: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  description: string
   adminOnly?: boolean
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: 'לוח בקרה', to: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: 'פרויקטים', to: '/projects', icon: <FolderOpen className="w-5 h-5" />, resource: 'project' },
-  { label: 'דוחות', to: '/reports', icon: <BarChart2 className="w-5 h-5" />, resource: 'report' },
-  { label: 'הצעות מחיר', to: '/price-quotes', icon: <FileText className="w-5 h-5" />, resource: 'quote' },
-  { label: 'ספקים', to: '/suppliers', icon: <Truck className="w-5 h-5" />, resource: 'supplier' },
-  { label: 'ניהול משימות', to: '/task-management', icon: <ClipboardList className="w-5 h-5" />, resource: 'task' },
-  { label: 'מלאי', to: '/inventory', icon: <Package className="w-5 h-5" /> },
-  { label: 'משתמשים', to: '/users', icon: <Users className="w-5 h-5" /> },
-  { label: 'הרשאות', to: '/admin-management', icon: <ShieldCheck className="w-5 h-5" /> },
-  { label: 'הגדרות', to: '/settings', icon: <Settings className="w-5 h-5" /> },
-]
-
-function NavItems({ collapsed }: { collapsed: boolean }) {
-  const me = useSelector((s: RootState) => s.auth.me)
-  const permissions = useSelector((s: RootState) => s.permissions.permissions)
-  const location = useLocation()
-
-  const isActive = (to: string) =>
-    location.pathname === to || location.pathname.startsWith(to + '/')
-
-  const canSee = (item: NavItem) => {
-    if (!item.resource) return true
-    if (me?.role === 'Admin') return true
-    return permissions.some((p) => p.resource_type === item.resource)
-  }
-
-  return (
-    <nav className="flex-1 overflow-y-auto py-4 space-y-1 px-2">
-      {NAV_ITEMS.filter(canSee).map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          className={cn(
-            'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-            isActive(item.to)
-              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
-            collapsed && 'justify-center px-2'
-          )}
-          title={collapsed ? item.label : undefined}
-        >
-          <span className="flex-shrink-0">{item.icon}</span>
-          {!collapsed && <span className="truncate">{item.label}</span>}
-        </NavLink>
-      ))}
-    </nav>
-  )
+  permission?: { resource: string }
+  settingsHref?: string
 }
 
 interface SidebarProps {
@@ -84,33 +46,279 @@ interface SidebarProps {
   onToggle: () => void
 }
 
+const ALL_NAVIGATION_ITEMS: NavigationItem[] = [
+  {
+    name: 'לוח בקרה',
+    href: '/',
+    icon: LayoutDashboard,
+    description: 'סקירה כללית של הפרויקטים',
+    permission: { resource: 'dashboard' }
+  },
+  {
+    name: 'פרויקטים',
+    href: '/projects',
+    icon: FolderOpen,
+    description: 'ניהול פרויקטים ותת-פרויקטים',
+    permission: { resource: 'project' }
+  },
+  {
+    name: 'דוחות',
+    href: '/reports',
+    icon: BarChart3,
+    description: 'דוחות פיננסיים ומעקב',
+    permission: { resource: 'report' }
+  },
+  {
+    name: 'הצעות מחיר',
+    href: '/price-quotes',
+    icon: Receipt,
+    description: 'בניית הצעות מחיר והמרה לפרויקטים',
+    permission: { resource: 'quote' }
+  },
+  {
+    name: 'ניהול משימות',
+    href: '/task-management',
+    icon: ClipboardList,
+    description: 'לוח, יומן, משימות והודעות',
+    permission: { resource: 'task' }
+  },
+  {
+    name: 'ניהול מלאי',
+    href: '/inventory',
+    icon: Package,
+    description: 'ציוד, מחסנים ומלאי',
+    settingsHref: '/inventory/settings',
+  },
+  {
+    name: 'היסטורית פעילות',
+    href: '/audit-logs',
+    icon: Activity,
+    description: 'מעקב אחר כל הפעולות במערכת',
+    permission: { resource: 'audit_log' }
+  },
+  {
+    name: 'ניהול מנהלים',
+    href: '/admin-management',
+    icon: UserCog,
+    description: 'ניהול מנהלי מערכת נוספים',
+    adminOnly: true
+  },
+  {
+    name: 'ניהול משתמשים',
+    href: '/users',
+    icon: UserCog,
+    description: 'ניהול משתמשי המערכת והרשאות',
+    adminOnly: true
+  },
+  {
+    name: 'הגדרות',
+    href: '/settings',
+    icon: Settings,
+    description: 'אזור אישי, הגדרות מערכת ומשתמש'
+  }
+]
+
+function filterNavigationItems(
+  items: NavigationItem[],
+  userRole: string | undefined,
+  permissions: Permission[]
+): NavigationItem[] {
+  const isAdmin = userRole === 'Admin'
+
+  return items.filter((item) => {
+    if (item.adminOnly) return isAdmin
+    if (!item.permission) return true
+    if (isAdmin) return true
+
+    const { resource } = item.permission
+    return permissions.some(p => p.resource_type === resource)
+  })
+}
+
 export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
+  const location = useLocation()
+  const dispatch = useDispatch<AppDispatch>()
+  const { theme, toggleTheme } = useTheme()
+  const me = useSelector((state: RootState) => state.auth.me)
+  const unreadNotifications = useSelector((state: RootState) => state.notifications.unreadCount)
+  const permissions = useSelector((state: RootState) => state.permissions.permissions)
+  const navigationItems = filterNavigationItems(ALL_NAVIGATION_ITEMS, me?.role, permissions)
+
+  useEffect(() => {
+    if (me) dispatch(fetchUnreadCount())
+  }, [dispatch, me])
+
   return (
-    <div
-      className={cn(
-        'fixed top-0 right-0 h-screen bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col z-30 transition-all duration-300',
-        isCollapsed ? 'w-[80px]' : 'w-[280px]'
-      )}
-      dir="rtl"
+    <motion.aside
+      initial={false}
+      animate={{ width: isCollapsed ? 80 : 280 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="fixed right-0 top-0 h-screen bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col z-30"
     >
-      {/* Logo area */}
-      <div className="flex-shrink-0 flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700 h-[60px]">
-        {!isCollapsed && <Logo size="md" showText />}
-        <button
-          onClick={onToggle}
-          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          title={isCollapsed ? 'הרחב תפריט' : 'כווץ תפריט'}
-        >
-          {isCollapsed ? (
-            <ChevronLeft className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          )}
-        </button>
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <AnimatePresence>
+            {!isCollapsed ? (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-2"
+              >
+                <Logo size="lg" showText={true} />
+                <a
+                  href="/guide"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="פתח מדריך למשתמש"
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-semibold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors whitespace-nowrap"
+                >
+                  <BookOpen className="w-3 h-3" />
+                  מדריך
+                </a>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col items-center gap-1"
+              >
+                <Logo size="lg" showText={false} collapsed={true} />
+                <a
+                  href="/guide"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="פתח מדריך למשתמש"
+                  className="w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors"
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                </a>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <button
+            onClick={onToggle}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            {isCollapsed ? (
+              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            )}
+          </button>
+        </div>
       </div>
 
-      <NavItems collapsed={isCollapsed} />
-    </div>
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {navigationItems.map((item) => {
+          const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href + '/'))
+          const Icon = item.icon
+
+          const settingsActive = item.settingsHref ? location.pathname.startsWith(item.settingsHref) : false
+
+          return (
+            <div key={item.name} className="relative group/nav">
+              <Link
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                  isActive
+                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
+                  !isCollapsed && item.settingsHref ? "pr-3 pl-8" : ""
+                )}
+              >
+                <span className="relative flex-shrink-0">
+                  <Icon className={cn(
+                    "w-5 h-5",
+                    isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"
+                  )} />
+                  {item.href === '/task-management' && unreadNotifications > 0 && (
+                    <span className="absolute -top-1 -left-1 min-w-[1.25rem] h-5 px-1 flex items-center justify-center rounded-full bg-blue-500 text-white text-xs font-medium">
+                      {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                    </span>
+                  )}
+                </span>
+
+                <AnimatePresence>
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex-1 min-w-0"
+                    >
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {item.description}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Link>
+
+              {item.settingsHref && !isCollapsed && (
+                <Link
+                  to={item.settingsHref}
+                  title="הגדרות מלאי"
+                  className={cn(
+                    "absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md transition-all",
+                    settingsActive
+                      ? "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30"
+                      : "text-gray-400 dark:text-gray-500 opacity-0 group-hover/nav:opacity-100 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  )}
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                </Link>
+              )}
+            </div>
+          )
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <AnimatePresence>
+          {!isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-3"
+            >
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                <div className="w-5 h-5 flex-shrink-0">
+                  {theme === 'dark' ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-sm font-medium">
+                  {theme === 'dark' ? 'מצב בהיר' : 'מצב כהה'}
+                </span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.aside>
   )
 }
 
@@ -120,38 +328,141 @@ interface MobileSidebarProps {
 }
 
 export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
+  const location = useLocation()
+  const { theme, toggleTheme } = useTheme()
+  const me = useSelector((state: RootState) => state.auth.me)
+  const unreadNotifications = useSelector((state: RootState) => state.notifications.unreadCount)
+  const permissions = useSelector((state: RootState) => state.permissions.permissions)
+  const navigationItems = filterNavigationItems(ALL_NAVIGATION_ITEMS, me?.role, permissions)
+
   return (
-    <>
-      {/* Backdrop */}
+    <AnimatePresence>
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={onClose}
-        />
-      )}
-
-      {/* Drawer */}
-      <div
-        className={cn(
-          'fixed top-0 right-0 h-screen w-[280px] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col z-50 transition-transform duration-300 lg:hidden',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
-        dir="rtl"
-      >
-        {/* Header */}
-        <div className="flex-shrink-0 flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700 h-[60px]">
-          <Logo size="md" showText />
-          <button
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            title="סגור תפריט"
+          />
+          
+          {/* Sidebar */}
+          <motion.aside
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="fixed inset-y-0 right-0 w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 lg:hidden"
           >
-            <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          </button>
-        </div>
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Logo size="lg" showText={true} />
+                  <a
+                    href="/guide"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="פתח מדריך למשתמש"
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-semibold hover:bg-blue-200 dark:hover:bg-blue-800/60 transition-colors whitespace-nowrap"
+                  >
+                    <BookOpen className="w-3 h-3" />
+                    מדריך
+                  </a>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                </button>
+              </div>
+            </div>
 
-        <NavItems collapsed={false} />
-      </div>
-    </>
+            <nav className="flex-1 p-4 space-y-2">
+              {navigationItems.map((item) => {
+                const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href + '/'))
+                const Icon = item.icon
+
+                const settingsActive = item.settingsHref ? location.pathname.startsWith(item.settingsHref) : false
+
+                return (
+                  <div key={item.name} className="relative group/nav">
+                    <Link
+                      to={item.href}
+                      onClick={onClose}
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                        isActive
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
+                        item.settingsHref ? "pl-8" : ""
+                      )}
+                    >
+                      <span className="relative flex-shrink-0">
+                        <Icon className={cn(
+                          "w-5 h-5",
+                          isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"
+                        )} />
+                        {item.href === '/task-management' && unreadNotifications > 0 && (
+                          <span className="absolute -top-1 -left-1 min-w-[1.25rem] h-5 px-1 flex items-center justify-center rounded-full bg-blue-500 text-white text-xs font-medium">
+                            {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                          </span>
+                        )}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium">{item.name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {item.description}
+                        </div>
+                      </div>
+                    </Link>
+
+                    {item.settingsHref && (
+                      <Link
+                        to={item.settingsHref}
+                        onClick={onClose}
+                        title="הגדרות מלאי"
+                        className={cn(
+                          "absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md transition-colors",
+                          settingsActive
+                            ? "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30"
+                            : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                        )}
+                      >
+                        <SlidersHorizontal className="w-3.5 h-3.5" />
+                      </Link>
+                    )}
+                  </div>
+                )
+              })}
+            </nav>
+
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <button
+                onClick={toggleTheme}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                <div className="w-5 h-5 flex-shrink-0">
+                  {theme === 'dark' ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-sm font-medium">
+                  {theme === 'dark' ? 'מצב בהיר' : 'מצב כהה'}
+                </span>
+              </button>
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
   )
 }
