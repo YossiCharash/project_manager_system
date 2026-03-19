@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from './store'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 // Auth pages - keep eagerly loaded (first pages the user sees)
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -30,9 +30,7 @@ const SupplierDocuments = React.lazy(() => import('./pages/SupplierDocuments'))
 const Settings = React.lazy(() => import('./pages/Settings'))
 const UnforeseenTransactions = React.lazy(() => import('./pages/UnforeseenTransactions'))
 const TaskManagement = React.lazy(() => import('./pages/TaskManagement'))
-const TaskCalendar = React.lazy(() => import('./pages/TaskCalendar'))
 const UserPermissions = React.lazy(() => import('./pages/UserPermissions'))
-const Notifications = React.lazy(() => import('./pages/Notifications'))
 const UserGuide = React.lazy(() => import('./pages/UserGuide'))
 const InventoryDashboard = React.lazy(() => import('./pages/inventory/InventoryDashboard'))
 const AssetsPage = React.lazy(() => import('./pages/inventory/AssetsPage'))
@@ -90,7 +88,9 @@ function RequireAuth({ children }: { children: JSX.Element }) {
 function RequirePermission({ resource, children }: { resource: string; children: JSX.Element }) {
   const canAccess = useSelector(selectHasAnyAccess(resource))
   const permissionsLoaded = useSelector((s: RootState) => s.permissions.loaded)
-  if (!permissionsLoaded) return null
+  const me = useSelector((s: RootState) => s.auth.me)
+  if (me?.role === 'Admin') return children
+  if (!permissionsLoaded) return <LoadingOverlay message="טוען הרשאות..." />
   if (!canAccess) return <AccessDenied />
   return children
 }
@@ -99,8 +99,8 @@ function RequireAnyPermission({ children }: { children: JSX.Element }) {
   const permissions = useSelector((s: RootState) => s.permissions.permissions)
   const permissionsLoaded = useSelector((s: RootState) => s.permissions.loaded)
   const me = useSelector((s: RootState) => s.auth.me)
-  if (!permissionsLoaded) return null
   if (me?.role === 'Admin') return children
+  if (!permissionsLoaded) return <LoadingOverlay message="טוען הרשאות..." />
   if (permissions.length === 0) return <NoPermissions />
   return children
 }
