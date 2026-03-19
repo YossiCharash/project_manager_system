@@ -1,37 +1,39 @@
-import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import api from '../../lib/api'
-import type { RootState } from '../index'
 
-interface Permission {
+export interface Permission {
   resource_type: string
   action: string
-  project_id?: number | null
+  source: string
+  resource_id?: string
+  effect?: string
 }
 
 interface PermissionsState {
   permissions: Permission[]
-  loaded: boolean
   loading: boolean
+  loaded: boolean
   error: string | null
 }
 
 const initialState: PermissionsState = {
   permissions: [],
-  loaded: false,
   loading: false,
+  loaded: false,
   error: null,
 }
 
 export const fetchUserPermissions = createAsyncThunk(
   'permissions/fetchUserPermissions',
-  async (userId: number, { rejectWithValue }) => {
-    try {
-      const { data } = await api.get<Permission[]>(`/iam/users/${userId}/permissions`)
+  async (userId: number) => {
+    const { data } = await api.get<Permission[] | { permissions: Permission[] }>(
+      `/iam/users/${userId}/permissions`
+    )
+    // Backend may return either a direct array or an object with a .permissions field
+    if (Array.isArray(data)) {
       return data
-    } catch {
-      // Non-fatal: Admins bypass permission checks server-side.
-      return rejectWithValue([])
     }
+    return (data as { permissions: Permission[] }).permissions ?? []
   }
 )
 
@@ -42,7 +44,6 @@ const permissionsSlice = createSlice({
     clearPermissions(state) {
       state.permissions = []
       state.loaded = false
-      state.loading = false
       state.error = null
     },
   },
@@ -52,39 +53,43 @@ const permissionsSlice = createSlice({
         state.loading = true
         state.error = null
       })
-      .addCase(fetchUserPermissions.fulfilled, (state, action) => {
-        state.permissions = action.payload as Permission[]
-        state.loaded = true
+      .addCase(fetchUserPermissions.fulfilled, (state, action: PayloadAction<Permission[]>) => {
+        state.permissions = action.payload
         state.loading = false
+        state.loaded = true
       })
-      .addCase(fetchUserPermissions.rejected, (state) => {
-        // Mark as loaded even on error so the UI doesn't hang on the loading
-        // gate.  Admin users won't have explicit permissions but can still
-        // access everything via server-side role checks.
-        state.permissions = []
-        state.loaded = true
+      .addCase(fetchUserPermissions.rejected, (state, action) => {
         state.loading = false
+        state.error = action.error.message ?? 'Failed to load permissions'
       })
   },
 })
 
 export const { clearPermissions } = permissionsSlice.actions
+export default permissionsSlice.reducer
 
 /**
- * Returns true when the current user has *any* permission on the given
- * resource type (read, write, delete …).
- *
- * Admins always get `true` because the server grants them full access
- * regardless of stored permissions.
+ * Factory selector — returns whether the current user has (action, resource) access.
+ * Admin users always return true. Non-admins are checked against the loaded permissions.
  */
-export const selectHasAnyAccess = (resourceType: string) =>
-  createSelector(
-    (state: RootState) => state.permissions.permissions,
-    (state: RootState) => state.auth.me,
-    (permissions, me) => {
-      if (me?.role === 'Admin') return true
-      return permissions.some((p) => p.resource_type === resourceType)
-    }
-  )
+export const selectCanAccess =
+  (action: string, resource: string) =>
+  (state: { auth: { me: { role: string } | null }; permissions: PermissionsState }): boolean => {
+    if (state.auth.me?.role === 'Admin') return true
+    const perms = state.permissions.permissions
+    return perms.some(
+      p => p.resource_type === resource && p.action === action
+    )
+  }
 
-export default permissionsSlice.reducer
+/**
+ * Returns true if the user has ANY non-denied permission for the given resource type.
+ * Admin always returns true. Non-admins must have at least one allow entry for the resource.
+ */
+export const selectHasAnyAccess =
+  (resource: string) =>
+  (state: { auth: { me: { role: string } | null }; permissions: PermissionsState }): boolean => {
+    if (state.auth.me?.role === 'Admin') return true
+    const perms = state.permissions.permissions
+    return perms.some(p => p.resource_type === resource)
+  }
