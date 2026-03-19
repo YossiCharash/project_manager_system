@@ -32,7 +32,7 @@ interface AlertsStripProps {
 
 const PINNED_ALERTS_KEY = 'pinned_dashboard_alerts'
 
-const AlertsStrip: React.FC<AlertsStripProps> = ({ alerts, projects, onProjectClick, onGoToFix }) => {
+const AlertsStrip: React.FC<AlertsStripProps> = ({ alerts, projects, onProjectClick, onGoToFix: _onGoToFix }) => {
   const [isExpanded, setIsExpanded] = React.useState(false)
   const [dismissedProjects, setDismissedProjects] = React.useState<Set<number>>(() => {
     const stored = localStorage.getItem('dismissed_alert_projects')
@@ -468,7 +468,7 @@ interface ModernDashboardProps {
   onProjectEdit?: (project: any) => void
 }
 
-export default function ModernDashboard({ onProjectClick, onProjectEdit }: ModernDashboardProps) {
+export default function ModernDashboard({ onProjectClick, onProjectEdit: _onProjectEdit }: ModernDashboardProps) {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const me = useAppSelector(s => s.auth.me)
@@ -497,7 +497,7 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit }: Moder
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<number>>(new Set())
   const [selectedAlerts, setSelectedAlerts] = useState<Set<number>>(new Set())
   const [showRestoreDialog, setShowRestoreDialog] = useState(false)
-  const [alertsLoading, setAlertsLoading] = useState(false)
+  const [, setAlertsLoading] = useState(false)
   const [projectsByStatusOpen, setProjectsByStatusOpen] = useState(false)
 
   useEffect(() => {
@@ -530,7 +530,7 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit }: Moder
     const getAllProjectsFlat = (projects: typeof dashboardData.projects): typeof dashboardData.projects => {
       const result: typeof dashboardData.projects = []
       const flatten = (projs: typeof dashboardData.projects) => {
-        projs.forEach(project => {
+        (projs ?? []).forEach(project => {
           result.push(project)
           if (project.children) {
             flatten(project.children)
@@ -586,59 +586,11 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit }: Moder
     setAlertsLoading(false)
   }, [dashboardData])
 
-  const dismissAlert = (alertId: number) => {
-    if (window.confirm('האם אתה בטוח שברצונך להסתיר את ההתראה הזו?\n\nההתראה תחזור אוטומטית אם הפרויקט ימשיך להיות בעייתי בבדיקה הבאה.')) {
-      const newDismissed = new Set(dismissedAlerts)
-      newDismissed.add(alertId)
-      setDismissedAlerts(newDismissed)
-      // Save to localStorage
-      localStorage.setItem('dismissedProfitabilityAlerts', JSON.stringify(Array.from(newDismissed)))
-    }
-  }
-
-  const toggleAlertSelection = (alertId: number) => {
-    const newSelected = new Set(selectedAlerts)
-    if (newSelected.has(alertId)) {
-      newSelected.delete(alertId)
-    } else {
-      newSelected.add(alertId)
-    }
-    setSelectedAlerts(newSelected)
-  }
-
-  const dismissSelectedAlerts = () => {
-    if (selectedAlerts.size === 0) return
-    
-    const alertNames = profitabilityAlerts
-      .filter(a => selectedAlerts.has(a.id))
-      .map(a => a.name)
-      .join(', ')
-    
-    if (window.confirm(`האם אתה בטוח שברצונך להסתיר את ההתראות הבאות?\n\n${alertNames}\n\nההתראות יחזרו אוטומטית אם הפרויקטים ימשיכו להיות בעייתיים בבדיקה הבאה.`)) {
-      const newDismissed = new Set(dismissedAlerts)
-      selectedAlerts.forEach(id => newDismissed.add(id))
-      setDismissedAlerts(newDismissed)
-      setSelectedAlerts(new Set())
-      // Save to localStorage
-      localStorage.setItem('dismissedProfitabilityAlerts', JSON.stringify(Array.from(newDismissed)))
-    }
-  }
-
   const restoreDismissedAlerts = () => {
     if (window.confirm('האם אתה בטוח שברצונך להציג מחדש את כל ההתראות שהוסתרו?')) {
       setDismissedAlerts(new Set())
       localStorage.removeItem('dismissedProfitabilityAlerts')
       setShowRestoreDialog(false)
-    }
-  }
-
-  const handleAlertClick = (alert: typeof profitabilityAlerts[0]) => {
-    if (alert.is_subproject && alert.parent_project_id) {
-      // Navigate to parent project detail page
-      navigate(`/projects/${alert.parent_project_id}/parent`)
-    } else {
-      // Navigate to project detail page
-      navigate(`/projects/${alert.id}`)
     }
   }
 
@@ -687,13 +639,11 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit }: Moder
   }
 
   // Filter out dismissed alerts
-  const visibleAlerts = profitabilityAlerts.filter(alert => !dismissedAlerts.has(alert.id))
-
   // Helper to flatten projects with children
   const getAllProjectsFlat = (projects: ProjectWithFinance[]): ProjectWithFinance[] => {
     const result: ProjectWithFinance[] = []
     const flatten = (projs: ProjectWithFinance[]) => {
-      projs.forEach(project => {
+      (projs ?? []).forEach(project => {
         result.push(project)
         if (project.children) {
           flatten(project.children)
@@ -704,7 +654,7 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit }: Moder
     return result
   }
 
-  const allProjectsFlat = dashboardData ? getAllProjectsFlat(dashboardData.projects) : []
+  const allProjectsFlat = dashboardData?.projects ? getAllProjectsFlat(dashboardData.projects) : []
 
   // --- Financial overview for PM (product-minded) ---
   const summary = dashboardData?.summary ?? { total_income: 0, total_expense: 0, total_profit: 0 }
