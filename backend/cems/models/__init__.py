@@ -1,4 +1,5 @@
 from backend.cems.models.base import CEMSBase, TimestampMixin
+from backend.cems.models.area import Area
 from backend.cems.models.warehouse import Warehouse, WarehouseProject, ManagerHistory
 from backend.cems.models.category import AssetCategory
 from backend.cems.models.project import CemsProject, Project
@@ -12,6 +13,7 @@ from backend.cems.models.document import CemsDocument, Document, DocumentType
 __all__ = [
     "CEMSBase",
     "TimestampMixin",
+    "Area",
     "Warehouse",
     "WarehouseProject",
     "ManagerHistory",
