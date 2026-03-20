@@ -186,13 +186,14 @@ const ISLAMIC_HOLIDAYS: { month: number; day: number; nameHe: string }[] = [
 export function getIslamicHolidays(start: Date, end: Date): HolidayEvent[] {
   const events: HolidayEvent[] = []
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const HijriDate = require('hijri-date').default as (d: number) => { getMonth: () => number; getDate: () => number }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const HijriDate = (globalThis as any).require?.('hijri-date')?.default as ((d: number) => { getMonth: () => number; getDate: () => number }) | undefined
+    if (!HijriDate) return events
     const cursor = new Date(start)
     cursor.setHours(0, 0, 0, 0)
     const endTime = end.getTime()
     while (cursor.getTime() <= endTime) {
-      const h = new HijriDate(cursor.getTime())
+      const h = HijriDate(cursor.getTime())
       const hMonth = h.getMonth()
       const hDay = h.getDate()
       for (const hol of ISLAMIC_HOLIDAYS) {

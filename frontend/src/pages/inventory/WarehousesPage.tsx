@@ -86,7 +86,7 @@ export default function WarehousesPage() {
     }
   }
 
-  function handleProjectsUpdated(warehouseId: string) {
+  function handleProjectsUpdated(_warehouseId: string) {
     setEditProjectsWarehouseId(null)
     loadData()
   }

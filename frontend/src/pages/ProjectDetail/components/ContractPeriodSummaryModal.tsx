@@ -60,7 +60,7 @@ export default function ContractPeriodSummaryModal({
     onShowPreviousYears,
     onExportCSV
 }: ContractPeriodSummaryModalProps) {
-    if (!isOpen) return null
+    if (!isOpen || !selectedPeriodSummary) return null
 
     const handleExportCSV = async () => {
         if (onExportCSV) {

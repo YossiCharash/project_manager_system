@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { SupplierAPI, Supplier } from '../lib/apiClient'
+import { Supplier } from '../lib/apiClient'
 
 interface DeleteSupplierModalProps {
   isOpen: boolean

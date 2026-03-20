@@ -259,6 +259,14 @@ export interface RecurringTransactionTemplateUpdate {
   is_active?: boolean
 }
 
+export interface RecurringTransactionInstanceUpdate {
+  tx_date?: string
+  amount?: number
+  category?: string | null
+  category_id?: number | null
+  notes?: string | null
+}
+
 // Unforeseen Transaction types
 export interface UnforeseenTransactionExpense {
   id: number

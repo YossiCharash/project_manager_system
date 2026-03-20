@@ -35,7 +35,7 @@ export default function QuoteDetailHeader({
   quoteNameInput,
   savingQuoteName,
   onGoBack,
-  onClose,
+  onClose: _onClose,
   onQuoteNameChange,
   onQuoteNameBlur,
   onQuoteNameKeyDown,

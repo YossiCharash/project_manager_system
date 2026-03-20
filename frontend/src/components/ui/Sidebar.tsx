@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
   FolderOpen,
   BarChart3,
-  Users,
   Settings,
-  Menu,
   X,
   ChevronLeft,
   ChevronRight,
-  Home,
-  FileText,
-  Building2,
   UserCog,
   Activity,
   Receipt,
   ClipboardList,
-  Bell,
   BookOpen,
   Package,
   SlidersHorizontal

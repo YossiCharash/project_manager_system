@@ -1,9 +1,9 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
-import { clearAuthState, login } from '../store/slices/authSlice'
+import { login } from '../store/slices/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../lib/api'
-import { Mail, Shield, User, Lock, ArrowRight, CheckCircle } from 'lucide-react'
+import { Mail, User, Lock, ArrowRight, CheckCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function EmailVerificationRegister() {
@@ -20,7 +20,7 @@ export default function EmailVerificationRegister() {
   })
   const [verificationCode, setVerificationCode] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [verificationSent, setVerificationSent] = useState(false)
+  const [, setVerificationSent] = useState(false)
 
   useEffect(() => {
     if (token) {

@@ -2,16 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '../utils/hooks'
 import { getToken } from '../lib/authCache'
 import { 
-  Plus, 
-  Copy, 
-  Trash2, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Mail, 
-  User,
-  Calendar,
-  Key
+  Plus,
+  Copy,
+  Trash2,
+  Clock,
+  CheckCircle,
+  XCircle
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 

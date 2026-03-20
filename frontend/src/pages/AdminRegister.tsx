@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
-import { clearAuthState, registerAdmin } from '../store/slices/authSlice'
+import { clearAuthState, login } from '../store/slices/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 

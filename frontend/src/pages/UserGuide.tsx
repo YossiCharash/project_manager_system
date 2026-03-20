@@ -18,7 +18,6 @@ import {
   DollarSign,
   Calendar,
   Tag,
-  PlusCircle,
   Search,
   Eye,
 } from 'lucide-react'

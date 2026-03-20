@@ -1,6 +1,6 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
-import { clearAuthState, login } from '../store/slices/authSlice'
+import { login } from '../store/slices/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 import { Shield, Key, User, Lock, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -16,7 +16,7 @@ export default function AdminInviteRegister() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [step, setStep] = useState<'code' | 'details'>('code')
-  const [inviteData, setInviteData] = useState<any>(null)
+  const [, setInviteData] = useState<any>(null)
 
   useEffect(() => {
     if (token) {

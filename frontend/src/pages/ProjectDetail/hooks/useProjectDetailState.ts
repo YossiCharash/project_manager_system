@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Transaction, SplitTransaction } from '../types'
+import { Transaction } from '../types'
 import { ExpenseCategory, BudgetWithSpending, RecurringTransactionTemplate, UnforeseenTransaction } from '../../../types/api'
 
 export function useProjectDetailState() {

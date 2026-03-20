@@ -8,7 +8,7 @@ import type { Task } from '../../pages/TaskCalendar'
 import TaskDetailModal from './TaskDetailModal'
 
 export default function SuperTasksPanel() {
-  const me = useSelector((s: RootState) => s.auth.user)
+  const me = useSelector((s: RootState) => s.auth.me)
   const isAdmin = me?.role === 'Admin'
 
   const [superTasks, setSuperTasks] = useState<Task[]>([])

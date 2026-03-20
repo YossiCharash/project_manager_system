@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback, useRef, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useState, useCallback, useRef, type FormEvent } from 'react'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
 import { fetchMe } from '../store/slices/authSlice'
-import { CategoryAPI, Category, CategoryCreate, SupplierAPI, Supplier, SupplierCreate, SupplierUpdate, QuoteStructureAPI, QuoteStructureItem } from '../lib/apiClient'
+import { CategoryAPI, Category, SupplierAPI, Supplier, SupplierCreate, QuoteStructureAPI, QuoteStructureItem } from '../lib/apiClient'
 import api, { avatarUrl } from '../lib/api'
 import { Plus, Trash2, Edit2, X, Check, Moon, Sun, Eye, Calendar, User, Mail, Phone } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
@@ -13,7 +13,7 @@ export default function Settings() {
   const dispatch = useAppDispatch()
   const { me, loading: authLoading } = useAppSelector(s => s.auth)
   const permissions = useAppSelector(s => s.permissions.permissions)
-  const isAdmin = me?.role === 'Admin' || me?.role === 'SuperAdmin'
+  const isAdmin = me?.role === 'Admin' || (me as any)?.role === 'SuperAdmin'
   const hasPermission = (resource: string) =>
     isAdmin || permissions.some(p => p.resource_type === resource)
   const canSeeCategories = hasPermission('category')
@@ -400,7 +400,7 @@ export default function Settings() {
   }
   
   // Handle delete supplier - opens modal
-  const handleDeleteSupplier = async (supplierId: number, supplierName: string) => {
+  const handleDeleteSupplier = async (supplierId: number, _supplierName: string) => {
     const supplier = suppliers.find(s => s.id === supplierId)
     if (!supplier) return
 
@@ -541,7 +541,7 @@ export default function Settings() {
   }
 
 
-  const handleDeleteCategory = async (categoryId: number, categoryName: string) => {
+  const handleDeleteCategory = async (categoryId: number, _categoryName: string) => {
     const category = categories.find(c => c.id === categoryId)
     if (!category) return
 
@@ -928,7 +928,7 @@ export default function Settings() {
                           קטגוריה *
                         </label>
                         <select
-                          value={supplierFormData.category}
+                          value={supplierFormData.category ?? undefined}
                           onChange={(e) => setSupplierFormData({ ...supplierFormData, category: e.target.value })}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                           required
@@ -1049,7 +1049,7 @@ export default function Settings() {
                                 קטגוריה *
                               </label>
                               <select
-                                value={supplierFormData.category}
+                                value={supplierFormData.category ?? undefined}
                                 onChange={(e) => setSupplierFormData({ ...supplierFormData, category: e.target.value })}
                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 required

@@ -27,7 +27,7 @@ const RecurringTransactionManagement: React.FC<RecurringTransactionManagementPro
   const loadTemplates = async () => {
     try {
       setLoading(true)
-      const data = await RecurringTransactionAPI.getProjectTemplates(projectId)
+      const data = await RecurringTransactionAPI.getProjectRecurringTemplates(projectId)
       setTemplates(data)
     } catch (err: any) {
       setError(err.response?.data?.detail || 'שגיאה בטעינת התבניות')

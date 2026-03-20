@@ -10,7 +10,6 @@ import {
   FileText,
   RefreshCw,
   Send,
-  ChevronLeft,
   User,
   Check
 } from 'lucide-react'

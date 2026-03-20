@@ -24,16 +24,12 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ budget, onDelete, deleting, onE
   const isWarning = progressPercent > 80 && !isOverBudget
   
   // Color based on status
-  let statusColor = '#10B981' // Green - good
   let statusText = 'בתקציב'
   if (isOverBudget) {
-    statusColor = '#EF4444' // Red - over budget
     statusText = 'חריגה מעל התקציב!'
   } else if (isSpendingTooFast) {
-    statusColor = '#F59E0B' // Orange - spending too fast
     statusText = 'הוצאה מהירה מהצפוי'
   } else if (isWarning) {
-    statusColor = '#FCD34D' // Yellow - warning
     statusText = 'קרוב לתקציב'
   }
 

@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import api from '../../../lib/api'
 import { CategoryAPI, RecurringTransactionAPI } from '../../../lib/apiClient'
 import { fetchMe } from '../../../store/slices/authSlice'
 import { fetchSuppliers } from '../../../store/slices/suppliersSlice'
@@ -184,7 +183,7 @@ export function useProjectDetailEffects(
     if (state.isParentProject && id && !isNaN(Number(id)) && !state.loading) {
       // Use setTimeout to ensure the navigation happens after the component has rendered
       const timer = setTimeout(() => {
-        navigate(`/projects/${id}/parent`, { replace: true })
+        navigate(`/projects/${id}/parent`)
       }, 100)
       return () => clearTimeout(timer)
     }

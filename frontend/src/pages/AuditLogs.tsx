@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Activity, 
-  Filter, 
-  Search, 
-  User, 
+  Activity,
+  Filter,
+  User,
   Calendar,
   RefreshCw,
   ChevronDown,
@@ -13,7 +12,6 @@ import {
   FolderOpen,
   DollarSign,
   Users,
-  Settings,
   Trash2,
   Edit,
   Plus,
@@ -22,7 +20,6 @@ import {
   ArrowRight,
   Info,
   Tag,
-  Hash,
   MapPin,
   Building2,
   CreditCard

@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef, useMemo } from 'react'
 import api from '../lib/api'
-import IncomeExpensePie from '../components/charts/IncomeExpensePie'
 import ProjectTrendsChart from '../components/charts/ProjectTrendsChart'
 import { FileText, Archive, Download, Filter, ChevronDown, ChevronUp, Calendar } from 'lucide-react'
-import { CategoryAPI, SupplierAPI, ReportAPI, ProjectAPI } from '../lib/apiClient'
+import { CategoryAPI, SupplierAPI, ProjectAPI } from '../lib/apiClient'
 import { parseLocalDate } from '../lib/utils'
 import { ExpenseCategory, Transaction } from '../types/api'
 import html2canvas from 'html2canvas'
@@ -29,7 +28,6 @@ export default function Reports() {
   const [generating, setGenerating] = useState(false)
 
   // Chart Refs for capturing
-  const incomeExpenseChartRef = useRef<HTMLDivElement>(null)
   const trendsChartRef = useRef<HTMLDivElement>(null)
 
   // State for ProjectTrendsChart

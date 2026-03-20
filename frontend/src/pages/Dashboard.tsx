@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
-import { archiveProject, createProject, fetchProjects, restoreProject, updateProject, hardDeleteProject } from '../store/slices/projectsSlice'
+import { archiveProject, createProject, fetchProjects, updateProject, hardDeleteProject } from '../store/slices/projectsSlice'
 import { useNavigate } from 'react-router-dom'
 import { fetchMe } from '../store/slices/authSlice'
 import Modal from '../components/Modal'
@@ -10,12 +10,11 @@ import { ProjectWithFinance } from '../types/api'
 
 export default function Dashboard() {
   const dispatch = useAppDispatch()
-  const { items } = useAppSelector(s => s.projects)
-  const me = useAppSelector(s => s.auth.me)
+    const me = useAppSelector(s => s.auth.me)
   const navigate = useNavigate()
 
   // Enhanced dashboard state
-  const [selectedProject, setSelectedProject] = useState<ProjectWithFinance | null>(null)
+  const [, setSelectedProject] = useState<ProjectWithFinance | null>(null)
   const [editingProject, setEditingProject] = useState<ProjectWithFinance | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
 
@@ -76,32 +75,8 @@ export default function Dashboard() {
     } finally { setCreating(false) }
   }
 
-  const openEditModal = (id: number) => {
-    const p = items.find(x => x.id === id)
-    if (!p) return
-    // @ts-expect-error
-    if (p.is_active === false) return
-    setEditingId(id)
-    setName(p.name || '')
-    // @ts-expect-error
-    setDescription(p.description || '')
-    // @ts-expect-error
-    setStartDate(p.start_date || '')
-    // @ts-expect-error
-    setEndDate(p.end_date || '')
-    setMonthly(p.budget_monthly ?? 0)
-    setAnnual(p.budget_annual ?? 0)
-    setAddress((p as any).address ?? '')
-    setCity((p as any).city ?? '')
-    setOpenCreate(true)
-  }
 
   const onCloseModal = () => { setOpenCreate(false); resetForm() }
-
-  const handleArchiveDeleteClick = (project: { id: number; name: string }) => {
-    setSelectedProjectForAction(project)
-    setShowArchiveDeleteModal(true)
-  }
 
   const handleArchive = async () => {
     if (!selectedProjectForAction) return
@@ -143,21 +118,6 @@ export default function Dashboard() {
     }
   }
 
-  // Legacy archive function - kept for backward compatibility if needed
-  const archive = async (id: number) => {
-    const project = items.find(p => p.id === id)
-    if (project) {
-      handleArchiveDeleteClick({ id, name: project.name || `פרויקט ${id}` })
-    }
-  }
-
-  const restore = async (id: number) => {
-    await dispatch(restoreProject(id))
-  }
-
-  const isAdmin = me?.role === 'Admin'
-  const canDelete = me?.role === 'Admin' // Only Admin can delete
-
   // Enhanced dashboard handlers
   const handleProjectClick = (project: ProjectWithFinance) => {
     setSelectedProject(project)
@@ -170,12 +130,10 @@ export default function Dashboard() {
     setShowCreateModal(true)
   }
 
-  const handleProjectSuccess = (project: any) => {
+  const handleProjectSuccess = () => {
     // Refresh the dashboard
     dispatch(fetchProjects())
   }
-
-  const visibleItems = items?.filter?.((p: any) => p?.is_active !== false) ?? []
 
   return (
     <div className="space-y-6">

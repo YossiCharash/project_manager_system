@@ -1,6 +1,5 @@
 import {motion} from 'framer-motion'
 import {formatDate} from '../../../lib/utils'
-import {UnforeseenTransaction as UnforeseenTransactionType} from '../../../types/api'
 import {useState} from 'react'
 import {FileText, X, Eye} from 'lucide-react'
 import ConfirmationModal from '../../../components/ConfirmationModal'

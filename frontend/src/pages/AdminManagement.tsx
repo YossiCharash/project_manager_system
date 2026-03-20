@@ -2,15 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '../utils/hooks'
 import api from '../lib/api'
 import { 
-  Plus, 
-  Copy, 
-  Trash2, 
-  Edit,
-  Mail, 
-  User,
-  Calendar,
-  Key,
-  Shield
+  Plus,
+  Trash2
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 

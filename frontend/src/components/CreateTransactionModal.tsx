@@ -591,7 +591,7 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
           subproject_id: subprojectId ? Number(subprojectId) : undefined
         }
   
-        const templateResponse = await RecurringTransactionAPI.createTemplate(templateData)
+        await RecurringTransactionAPI.createTemplate(templateData)
       
       // Generate transactions - if start_date is in the past, generate for all months from start_date to current month
       const today = new Date()

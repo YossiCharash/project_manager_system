@@ -44,8 +44,8 @@ const CreateRecurringTransactionModal: React.FC<CreateRecurringTransactionModalP
   const [dateError, setDateError] = useState<string | null>(null)
   const [filesToUpload, setFilesToUpload] = useState<File[]>([])
   const [showDescriptionModal, setShowDescriptionModal] = useState(false)
-  const [uploadedDocuments, setUploadedDocuments] = useState<Array<{id: number, fileName: string, description: string}>>([])
-  const [selectedTransactionForDocuments, setSelectedTransactionForDocuments] = useState<any | null>(null)
+  const [, setUploadedDocuments] = useState<Array<{id: number, fileName: string, description: string}>>([])
+  const [, setSelectedTransactionForDocuments] = useState<any | null>(null)
   
   const [availableCategories, setAvailableCategories] = useState<any[]>([])
   const [useProjectStartDate, setUseProjectStartDate] = useState(false)
@@ -212,7 +212,7 @@ const CreateRecurringTransactionModal: React.FC<CreateRecurringTransactionModalP
         max_occurrences: formData.end_type === 'After Occurrences' ? formData.max_occurrences : undefined
       }
 
-      const templateResponse = await RecurringTransactionAPI.createTemplate(templateData)
+      await RecurringTransactionAPI.createTemplate(templateData)
       
       // Generate transactions - if start_date is in the past, generate for all months from start_date to current month
       const today = new Date()

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { UnforeseenTransactionAPI, ProjectAPI } from '../lib/apiClient'
 import { UnforeseenTransaction, UnforeseenTransactionCreate, UnforeseenTransactionExpenseCreate, Project } from '../types/api'
-import { Plus, Edit, Trash2, Check, X, FileText, Upload, Download, ArrowLeft } from 'lucide-react'
+import { Plus, Edit, Trash2, Check, X, FileText, ArrowLeft } from 'lucide-react'
 import { formatDate } from '../lib/utils'
 import Modal from '../components/Modal'
 import ConfirmationModal from '../components/ConfirmationModal'
@@ -165,19 +165,6 @@ export default function UnforeseenTransactions() {
     }
   }
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'draft':
-        return 'טיוטה'
-      case 'waiting_for_approval':
-        return 'מחכה לאישור'
-      case 'executed':
-        return 'בוצע'
-      default:
-        return status
-    }
-  }
-
   const handleExecute = async (tx: UnforeseenTransaction) => {
     setExecuteConfirmState({ isOpen: true, transaction: tx })
   }
@@ -258,15 +245,6 @@ export default function UnforeseenTransactions() {
       return
     } finally {
       setSubmitting(false)
-    }
-  }
-
-  const handleUploadDocument = async (txId: number, expenseId: number, file: File) => {
-    try {
-      await UnforeseenTransactionAPI.uploadExpenseDocument(txId, expenseId, file)
-      await loadData(false, true)
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'שגיאה בהעלאת המסמך')
     }
   }
 
@@ -519,9 +497,9 @@ export default function UnforeseenTransactions() {
                               </p>
                             )}
                           </div>
-                          {exp.document && (
+                          {exp.documents && exp.documents[0] && (
                             <a
-                              href={exp.document.file_path}
+                              href={exp.documents[0].file_path}
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
