@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { X, Plus, Trash2, Upload, File } from 'lucide-react'
+import { X, Plus, Trash2, Upload, File as FileIcon } from 'lucide-react'
 import { TransactionCreate, ProjectWithFinance, UnforeseenTransactionCreate, UnforeseenTransactionExpenseCreate } from '../types/api'
 import { TransactionAPI, ProjectAPI, CategoryAPI, Category, UnforeseenTransactionAPI, GroupTransactionDraftAPI, GroupTransactionDraftOut } from '../lib/apiClient'
 import api from '../lib/api'
@@ -136,10 +136,10 @@ const GroupTransactionModal: React.FC<GroupTransactionModalProps> = ({
   const loadProjects = async () => {
     try {
       const data = await ProjectAPI.getProjects()
-      const filtered = data.filter((p: ProjectWithFinance) => 
+      const filtered = data.filter(p =>
         p.is_active && (!p.relation_project || p.is_parent_project)
       )
-      setProjects(filtered)
+      setProjects(filtered as ProjectWithFinance[])
     } catch (err: any) {
       console.error('Error loading projects:', err)
       setError('שגיאה בטעינת פרויקטים. נסה לסגור ולפתוח מחדש.')
@@ -446,7 +446,8 @@ const GroupTransactionModal: React.FC<GroupTransactionModalProps> = ({
           // If category changed, reset supplier if it doesn't match the new category
           if (field === 'categoryId') {
             const selectedCategoryId = value ? Number(value) : null
-            const selectedCategory = selectedCategoryId ? availableCategories.find(c => c.id === selectedCategoryId) : null
+            const _selectedCategory = selectedCategoryId ? availableCategories.find(c => c.id === selectedCategoryId) : null
+            void _selectedCategory
             
             if (selectedCategoryId && row.supplierId) {
               // Check if current supplier belongs to the new category
@@ -1651,8 +1652,6 @@ const GroupTransactionModal: React.FC<GroupTransactionModalProps> = ({
                     const subprojects = isParentProject && row.projectId
                       ? getSubprojectsForProject(row.projectId as number)
                       : []
-                    const contractPeriods = row.projectId ? (contractPeriodsMap[row.projectId as number] || []) : []
-
                     const rowBgClass = index % 2 === 0 
                       ? 'bg-white dark:bg-gray-800' 
                       : 'bg-gray-50/50 dark:bg-gray-800/50'
@@ -2005,7 +2004,7 @@ const GroupTransactionModal: React.FC<GroupTransactionModalProps> = ({
                             <div className="flex flex-wrap gap-2">
                               {row.files.map((file, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                                  <File className="w-3 h-3 flex-shrink-0" />
+                                  <FileIcon className="w-3 h-3 flex-shrink-0" />
                                   <span className="truncate max-w-[120px]">{file.name}</span>
                                   <button type="button" onClick={() => removeFile(row.id, idx)} className="text-red-500 hover:text-red-700"><X className="w-3 h-3" /></button>
                                 </div>

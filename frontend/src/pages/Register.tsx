@@ -1,6 +1,6 @@
-import React, { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
-import { clearAuthState, register, registerAdmin, registerMember } from '../store/slices/authSlice'
+import { clearAuthState, registerAdmin, registerMember } from '../store/slices/authSlice'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function Register() {

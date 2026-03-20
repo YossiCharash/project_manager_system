@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Project } from '../types/api'
+type ProjectWithChildren = Project & { children?: ProjectWithChildren[] }
 
 interface ProjectTreeViewProps {
   projects: Project[]
@@ -11,7 +12,7 @@ interface ProjectTreeViewProps {
 }
 
 interface ProjectTreeNodeProps {
-  project: Project
+  project: ProjectWithChildren
   level: number
   onProjectSelect?: (project: Project) => void
   onProjectEdit?: (project: Project) => void
@@ -110,7 +111,7 @@ const ProjectTreeNode: React.FC<ProjectTreeNodeProps> = ({
 
       {hasChildren && isExpanded && (
         <div>
-          {project.children!.map((child) => (
+          {project.children!.map((child: ProjectWithChildren) => (
             <ProjectTreeNode
               key={child.id}
               project={child}

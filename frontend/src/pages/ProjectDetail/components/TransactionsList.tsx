@@ -1,9 +1,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import api from '../../../lib/api'
 import { Transaction } from '../types'
 import { getCategoryName, splitPeriodTransactionByMonth, formatCurrency } from '../utils'
-import { PAYMENT_METHOD_LABELS } from '../constants'
 import { formatDate, parseLocalDate } from '../../../lib/utils'
 import { CATEGORY_LABELS, normalizeCategoryForFilter } from '../../../utils/calculations'
 
@@ -47,16 +45,16 @@ export default function TransactionsList({
   startDate,
   endDate,
   viewingPeriodId,
-  suppliers,
+  suppliers: _suppliers,
   onSetFilterType,
   onSetFilterExceptional,
   onSetFilterDated,
   onSetCategoryFilter,
   onSetDateFilterMode,
   onShowTransactionDetails,
-  onShowDocumentsModal,
-  onEditTransaction,
-  onDeleteTransaction
+  onShowDocumentsModal: _onShowDocumentsModal,
+  onEditTransaction: _onEditTransaction,
+  onDeleteTransaction: _onDeleteTransaction
 }: TransactionsListProps) {
   // Filter transactions based on date filter mode
   const currentDate = new Date()

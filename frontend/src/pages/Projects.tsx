@@ -8,7 +8,6 @@ import { motion } from 'framer-motion'
 import {
   Plus,
   Search,
-  Filter,
   Grid,
   List,
   Edit,
@@ -25,7 +24,7 @@ import Modal from '../components/Modal'
 import CreateProjectModal from '../components/CreateProjectModal'
 import CreateTransactionModal from '../components/CreateTransactionModal'
 import GroupTransactionModal from '../components/GroupTransactionModal'
-import CategoryBarChart, { CategoryPoint } from '../components/charts/CategoryBarChart'
+import { CategoryPoint } from '../components/charts/CategoryBarChart'
 import api from '../lib/api'
 
 interface ProjectCardProps {
@@ -40,10 +39,9 @@ interface ProjectCardProps {
   hasSubprojects?: boolean
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = React.memo(({ 
-  project, 
-  projectChart,
-  onProjectClick, 
+const ProjectCard: React.FC<ProjectCardProps> = React.memo(({
+  project,
+  onProjectClick,
   onProjectEdit, 
   onProjectArchive,
   onProjectRestore,
@@ -86,18 +84,6 @@ const ProjectCard: React.FC<ProjectCardProps> = React.memo(({
     }
   }
 
-  const getProfitabilityDetails = (project: ProjectWithFinance) => {
-    const profit = (project.income_month_to_date || 0) - (project.expense_month_to_date || 0)
-    const profitPercent = project.profit_percent || 0
-    
-    return {
-      profit,
-      profitPercent,
-      isProfitable: profitPercent >= 10,
-      isLoss: profitPercent <= -10,
-      isBalanced: profitPercent > -10 && profitPercent < 10
-    }
-  }
 
   const getImageUrl = (imageUrl: string | null | undefined): string | null => {
     if (!imageUrl) return null
@@ -271,7 +257,7 @@ export default function Projects() {
   
   const [dashboardData, setDashboardData] = useState<DashboardSnapshot | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [projectCharts, setProjectCharts] = useState<Record<number, CategoryPoint[]>>({})
   
   const [searchTerm, setSearchTerm] = useState('')
@@ -286,7 +272,7 @@ export default function Projects() {
   const [transactionProject, setTransactionProject] = useState<ProjectWithFinance | null>(null)
   const [editingProject, setEditingProject] = useState<ProjectWithFinance | null>(null)
   const [selectedParentProject, setSelectedParentProject] = useState<ProjectWithFinance | null>(null)
-  const [archivingProject, setArchivingProject] = useState<number | null>(null)
+  const [, setArchivingProject] = useState<number | null>(null)
   const archiveFilterRef = useRef(archiveFilter)
   const lastLocationKeyRef = useRef(location.key)
   const [showArchiveDeleteModal, setShowArchiveDeleteModal] = useState(false)
@@ -522,7 +508,7 @@ export default function Projects() {
     setShowTransactionModal(true)
   }, [])
 
-  const handleProjectSuccess = (project?: any) => {
+  const handleProjectSuccess = () => {
     setShowCreateModal(false)
     setEditingProject(null)
     // Reload projects data without causing page reload
@@ -574,7 +560,6 @@ export default function Projects() {
     return ids
   }, [dashboardData?.projects])
 
-  const isAdmin = me?.role === 'Admin'
   const canWriteProject = usePermission('write', 'project')
   const canDeleteProject = usePermission('delete', 'project')
 

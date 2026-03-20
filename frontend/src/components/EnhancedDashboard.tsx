@@ -571,8 +571,9 @@ const EnhancedDashboard: React.FC<EnhancedDashboardProps> = ({
       // Set empty state on error to prevent UI crashes
       setDashboardData({
         projects: [],
-        alerts: { budget_overrun: [], missing_proof: [], unpaid_recurring: [] },
-        summary: { total_income: 0, total_expense: 0, total_profit: 0 }
+        alerts: { budget_overrun: [], budget_warning: [], missing_proof: [], unpaid_recurring: [], negative_fund_balance: [], category_budget_alerts: [] },
+        summary: { total_income: 0, total_expense: 0, total_profit: 0 },
+        expense_categories: []
       })
     } finally {
       setLoading(false)

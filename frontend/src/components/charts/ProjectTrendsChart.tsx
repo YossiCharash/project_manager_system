@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { parseLocalDate } from '../../lib/utils'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { Calendar, Filter, TrendingUp, PieChart as PieChartIcon, BarChart as BarChartIcon, Activity, Camera, Download } from 'lucide-react'
+import { Calendar, Filter, TrendingUp, PieChart as PieChartIcon, BarChart as BarChartIcon, Activity, Camera } from 'lucide-react'
 import html2canvas from 'html2canvas'
-import { ProjectAPI } from '../../lib/apiClient'
 
 interface ProjectTrendsChartProps {
   projectId: number
@@ -171,7 +170,7 @@ export default function ProjectTrendsChart({
     const current = new Date(Math.max(periodStart.getTime(), filterStart.getTime()))
     current.setDate(1) // Start of month
     
-    while (current <= Math.min(periodEnd, filterEnd)) {
+    while (current.getTime() <= Math.min(periodEnd.getTime(), filterEnd.getTime())) {
       const year = current.getFullYear()
       const month = current.getMonth()
       const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`
@@ -211,7 +210,6 @@ export default function ProjectTrendsChart({
   const processData = () => {
     // First, filter out cash register transactions (from_fund = true)
     let filteredTransactions = transactions.filter(tx => !tx.from_fund)
-    const now = new Date()
 
     let filterStart: Date
     let filterEnd: Date
@@ -414,7 +412,7 @@ export default function ProjectTrendsChart({
     
     // Initialize with all known expense categories (with 0 amount)
     // This ensures all categories are shown even if they have no transactions in the period
-    expenseCategories.forEach(cat => {
+    ;(expenseCategories || []).forEach(cat => {
       categoryTotals[cat.category] = {
         amount: 0,
         color: cat.color,
@@ -428,7 +426,7 @@ export default function ProjectTrendsChart({
         const category = tx.category || 'אחר'
         if (!categoryTotals[category]) {
           // Find color from original expenseCategories or use default
-          const originalCategory = expenseCategories.find(cat => cat.category === category)
+          const originalCategory = (expenseCategories || []).find(cat => cat.category === category)
           categoryTotals[category] = {
             amount: 0,
             color: originalCategory?.color || '#8884d8',

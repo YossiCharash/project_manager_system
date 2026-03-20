@@ -80,6 +80,8 @@ interface Transaction {
   is_exceptional?: boolean
   subproject_name?: string
   is_generated?: boolean
+  period_start_date?: string | null
+  period_end_date?: string | null
 }
 
 
@@ -205,7 +207,7 @@ const ConsolidatedFinancialSummary: React.FC<ConsolidatedFinancialSummaryProps> 
   subprojects, 
   onAddTransaction, 
   onEditSubproject, 
-  onNavigateSubproject,
+  onNavigateSubproject: _onNavigateSubproject,
   filterMode,
   onFilterModeChange,
   selectedMonth,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   QuoteProjectsAPI,
@@ -40,7 +40,7 @@ export default function QuoteDetail({ quoteId: quoteIdProp, embedMode, onClose }
   const [approving, setApproving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [approveCurrentQuote, setApproveCurrentQuote] = useState<QuoteProject | null>(null)
-  const [addSuccessMessage, setAddSuccessMessage] = useState<string | null>(null)
+  const [addSuccessMessage] = useState<string | null>(null)
   const [editingQuoteName, setEditingQuoteName] = useState(false)
   const [quoteNameInput, setQuoteNameInput] = useState('')
   const [savingQuoteName, setSavingQuoteName] = useState(false)

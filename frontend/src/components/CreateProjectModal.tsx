@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Project, ProjectCreate, BudgetCreate, BudgetWithSpending } from '../types/api'
 import { ProjectAPI, BudgetAPI, CategoryAPI, Category } from '../lib/apiClient'
 import { formatDateForInput } from '../lib/utils'
@@ -73,7 +73,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const [isCheckingName, setIsCheckingName] = useState(false)
   const [nameValid, setNameValid] = useState<boolean | null>(null)
   const [hasPastPeriods, setHasPastPeriods] = useState(false)
-  const [checkingPastPeriods, setCheckingPastPeriods] = useState(false)
+  const [, setCheckingPastPeriods] = useState(false)
   const [contractPeriods, setContractPeriods] = useState<Array<{
     period_id: number
     start_date: string
@@ -961,18 +961,6 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       return
     }
     const today = new Date().toISOString().split('T')[0]
-    // Use project start date if set, otherwise today
-    const defaultStartDate = formData.start_date || today
-
-    // Calculate default end date for Annual period
-    let defaultEndDate: string | null = null
-    if (defaultStartDate) {
-      const startDate = new Date(defaultStartDate)
-      const endDate = new Date(startDate)
-      endDate.setFullYear(endDate.getFullYear() + 1)
-      endDate.setDate(endDate.getDate() - 1)
-      defaultEndDate = endDate.toISOString().split('T')[0]
-    }
 
     const newBudget: BudgetCreate = {
       category_id: availableCategories[0].id,
@@ -1016,7 +1004,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     return reserved
   }, [existingBudgetCategories, categoryBudgets])
 
-  const hasAvailableBudgetCategories = expenseCategories.some(cat => !usedBudgetCategories.has(cat))
+  const hasAvailableBudgetCategories = expenseCategories.some(cat => !usedBudgetCategories.has(cat.name))
 
   if (!isOpen) return null
 
@@ -1653,7 +1641,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                         }
                       }}
                       min={formData.start_date || undefined}
-                      readOnly={!!calculatedEndDate || (editingProject && hasPastPeriods && (editFromCurrentPeriod || selectedPeriodId))}
+                      readOnly={!!calculatedEndDate || !!(editingProject && hasPastPeriods && (editFromCurrentPeriod || selectedPeriodId))}
                       className={`w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         calculatedEndDate || (editingProject && hasPastPeriods && (editFromCurrentPeriod || selectedPeriodId))
                           ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed' 

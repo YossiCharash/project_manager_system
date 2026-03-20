@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { ProjectWithFinance, TransactionCreate } from '../types/api'
-import { ProjectAPI, TransactionAPI } from '../lib/apiClient'
+import { TransactionCreate } from '../types/api'
+import { ProjectAPI, TransactionAPI, DashboardAPI } from '../lib/apiClient'
 import { mockDashboardSnapshot } from '../mockData/dashboardData'
 
 // Test component to demonstrate sub-project creation and transaction posting

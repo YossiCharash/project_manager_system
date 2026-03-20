@@ -52,7 +52,7 @@ const EditTransactionInstanceModal: React.FC<EditTransactionInstanceModalProps> 
       if (transaction && transaction.category && !transaction.category_id) {
           const cat = activeCategories.find(c => c.name === transaction.category)
           if (cat) {
-              setFormData(prev => ({ ...prev, category_id: cat.id }))
+              setFormData((prev: RecurringTransactionInstanceUpdate) => ({ ...prev, category_id: cat.id }))
           }
       }
     } catch (err) {
@@ -213,7 +213,7 @@ const EditTransactionInstanceModal: React.FC<EditTransactionInstanceModalProps> 
               הערות
             </label>
             <textarea
-              value={formData.notes}
+              value={formData.notes ?? undefined}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               rows={3}
               placeholder="הערות נוספות"

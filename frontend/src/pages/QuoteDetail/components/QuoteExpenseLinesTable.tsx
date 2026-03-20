@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { CheckCircle, ChevronDown, Pencil, Trash2, X } from 'lucide-react'
 import type { QuoteLine } from '../../../lib/apiClient'
 

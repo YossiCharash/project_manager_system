@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { motion } from 'framer-motion'
 import { X, Plus, Eye, Edit, CheckCircle, Trash2, FolderOpen, ExternalLink } from 'lucide-react'
 import type { QuoteProject } from '../lib/apiClient'
@@ -129,7 +129,7 @@ export default function ProjectQuotesFloatingModal({
   const approvedQuotes: QuoteProject[] = []
   const otherQuotes: QuoteProject[] = []
 
-  const addFromProject = (quotes: QuoteProject[] | undefined, hasApproved: boolean) => {
+  const addFromProject = (quotes: QuoteProject[] | undefined) => {
     if (!quotes) return
     const filtered = filterQuotes(quotes)
     filtered.forEach((q) => {
@@ -138,9 +138,9 @@ export default function ProjectQuotesFloatingModal({
     })
   }
 
-  addFromProject(project.quotes, (project.quotes ?? []).some((q) => q.status === 'approved'))
+  addFromProject(project.quotes)
   ;(project.subprojects ?? []).forEach((sub) => {
-    addFromProject(sub.quotes, (sub.quotes ?? []).some((q) => q.status === 'approved'))
+    addFromProject(sub.quotes)
   })
 
   const hasSubprojects = (project.subprojects?.length ?? 0) > 0

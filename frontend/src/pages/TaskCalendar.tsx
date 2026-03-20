@@ -10,7 +10,7 @@ import type { EventChangeArg, DatesSetArg, EventClickArg, DateSelectArg } from '
 import type { EventDragStartArg } from '@fullcalendar/interaction'
 import api, { avatarUrl, fileAttachmentUrl } from '../lib/api'
 import { getToken } from '../lib/authCache'
-import { Calendar, User, Plus, Trash2, Pencil, CalendarSync, Link2, Unlink, Tag, Paperclip, X, Bell, CheckCircle, MessageCircle, Send, Archive } from 'lucide-react'
+import { Calendar, Plus, Trash2, Pencil, CalendarSync, Link2, Unlink, Tag, Paperclip, X, Bell, CheckCircle, MessageCircle, Send, Archive } from 'lucide-react'
 import Modal from '../components/Modal'
 import ToastNotification, { useToast } from '../components/ToastNotification'
 import { cn } from '../lib/utils'
@@ -167,7 +167,7 @@ function getTaskOccurrences(
   const seriesEnd = endDateStr ? new Date(endDateStr) : new Date(start.getFullYear() + 1, start.getMonth(), start.getDate())
 
   const occurrences: { start: Date; end: Date }[] = []
-  if (!rule || rule === '') {
+  if (!rule) {
     if (start.getTime() < rangeEnd.getTime() && end.getTime() > rangeStart.getTime()) {
       occurrences.push({ start, end })
     }
@@ -1187,7 +1187,7 @@ export default function TaskCalendar({ embedded }: TaskCalendarProps = {}) {
       calApi.changeView('dayGridMonth', currentDate)
     } else {
       // For non-month views or same-mode switches (hebrew ↔ both), just re-render cells
-      calApi.render()
+      calApi.updateSize()
     }
   }, [calendarDateDisplay, isHebrewMode])
 

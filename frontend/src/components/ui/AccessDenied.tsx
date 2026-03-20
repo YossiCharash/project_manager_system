@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { Lock, ShieldOff } from 'lucide-react'
 
 /** Shown when a user tries to access a specific page they don't have permission for */

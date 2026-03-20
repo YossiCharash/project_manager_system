@@ -107,7 +107,7 @@ function AssignmentDropdown({
   )
 }
 
-export default function TaskChecklist({ taskId, canEdit, participants = [], currentUserId }: TaskChecklistProps) {
+export default function TaskChecklist({ taskId, canEdit, participants = [], currentUserId: _currentUserId }: TaskChecklistProps) {
   const [items, setItems] = useState<TaskChecklistItem[]>([])
   const [loading, setLoading] = useState(false)
   const [newItemText, setNewItemText] = useState('')

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Pie, PieChart, ResponsiveContainer, Tooltip, Cell, Legend, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 import { PieChart as PieChartIcon, BarChart as BarChartIcon, Activity } from 'lucide-react'
 
@@ -13,15 +13,6 @@ interface SystemFinancialPieChartProps {
 }
 
 type ChartType = 'pie' | 'bar' | 'line'
-
-const COLORS = {
-  income: '#10B981', // green-500
-  cleaning: '#3B82F6', // blue-500
-  electricity: '#F59E0B', // amber-500
-  insurance: '#8B5CF6', // violet-500
-  gardening: '#059669', // emerald-500
-  other: '#EF4444', // red-500
-}
 
 export default function SystemFinancialPieChart({ 
   totalIncome, 

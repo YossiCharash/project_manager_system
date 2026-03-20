@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Lock, Building2, CheckCircle } from 'lucide-react'

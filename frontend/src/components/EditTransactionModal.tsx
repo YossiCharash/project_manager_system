@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CategoryAPI } from '../lib/apiClient'
 import { Transaction, TransactionCreate } from '../types/api'
+type ExtendedTransaction = Transaction
 import { TransactionAPI } from '../lib/apiClient'
 import { useAppDispatch, useAppSelector } from '../utils/hooks'
 import { fetchSuppliers } from '../store/slices/suppliersSlice'

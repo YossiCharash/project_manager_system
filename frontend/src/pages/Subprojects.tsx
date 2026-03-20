@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { 
   Plus, 
   Search, 
-  Filter, 
   Grid, 
   List,
   Edit,
@@ -19,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '../utils/hooks'
 import { archiveProject, hardDeleteProject } from '../store/slices/projectsSlice'
 import Modal from '../components/Modal'
 import CreateProjectModal from '../components/CreateProjectModal'
-import CategoryBarChart, { CategoryPoint } from '../components/charts/CategoryBarChart'
+import { CategoryPoint } from '../components/charts/CategoryBarChart'
 import api from '../lib/api'
 
 interface ProjectCardProps {
@@ -30,10 +29,9 @@ interface ProjectCardProps {
   onProjectArchive?: (project: ProjectWithFinance) => void
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ 
-  project, 
-  projectChart,
-  onProjectClick, 
+const ProjectCard: React.FC<ProjectCardProps> = ({
+  project,
+  onProjectClick,
   onProjectEdit, 
   onProjectArchive 
 }) => {

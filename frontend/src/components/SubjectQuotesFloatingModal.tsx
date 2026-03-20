@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { motion } from 'framer-motion'
 import { X, Plus, Eye, Edit, CheckCircle, Trash2, Pencil } from 'lucide-react'
 import type { QuoteProject, QuoteSubject } from '../lib/apiClient'

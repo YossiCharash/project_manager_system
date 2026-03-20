@@ -2,7 +2,7 @@
  * Tests for Login page component
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
@@ -21,6 +21,7 @@ const createTestStore = (initialState = {}) => {
         me: null,
         loading: false,
         error: null,
+        registered: false,
         requiresPasswordChange: false,
         ...initialState,
       },

@@ -38,7 +38,7 @@ const EditRecurringTemplateModal: React.FC<EditRecurringTemplateModalProps> = ({
   const [availableCategories, setAvailableCategories] = useState<any[]>([])
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [changesSummary, setChangesSummary] = useState<string[]>([])
-  const [templateLoading, setTemplateLoading] = useState(false)
+  useState(false) // templateLoading state (unused)
 
   useEffect(() => {
     if (isOpen && template) {
@@ -106,7 +106,7 @@ const EditRecurringTemplateModal: React.FC<EditRecurringTemplateModalProps> = ({
     if (formData.amount !== template.amount) changes.push(`סכום: ${template.amount} -> ${formData.amount}`)
     if (formData.category !== template.category) changes.push(`קטגוריה: ${template.category || 'ללא'} -> ${formData.category || 'ללא'}`)
     
-    if (!formData.category && formData.amount > 0) {
+    if (!formData.category && (formData.amount ?? 0) > 0) {
        setError('יש לבחור קטגוריה')
        return
     }
@@ -264,7 +264,7 @@ const EditRecurringTemplateModal: React.FC<EditRecurringTemplateModalProps> = ({
               <input
                 type="text"
                 required
-                value={formData.description}
+                value={formData.description ?? undefined}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
@@ -348,7 +348,7 @@ const EditRecurringTemplateModal: React.FC<EditRecurringTemplateModalProps> = ({
               הערות
             </label>
             <textarea
-              value={formData.notes}
+              value={formData.notes ?? undefined}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               rows={3}
               placeholder="הערות נוספות"

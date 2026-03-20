@@ -2,7 +2,6 @@
  * Tests for API client
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import api from '../api'
 import axios from 'axios'
 
 // Mock axios

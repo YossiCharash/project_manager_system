@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { Building2, Plus, Trash2 } from 'lucide-react'
 import type { QuoteBuilding, QuoteCalculationMethod } from '../lib/apiClient'
 

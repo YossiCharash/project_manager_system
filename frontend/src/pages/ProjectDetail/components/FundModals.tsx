@@ -303,8 +303,8 @@ export default function FundModals({
               ) : (
                 <div className="space-y-3">
                   {fundData.transactions
-                    .filter(tx => fundCategoryFilter === 'all' || tx.category === fundCategoryFilter)
-                    .map((tx) => (
+                    .filter((tx: any) => fundCategoryFilter === 'all' || tx.category === fundCategoryFilter)
+                    .map((tx: any) => (
                     <div key={tx.id} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">

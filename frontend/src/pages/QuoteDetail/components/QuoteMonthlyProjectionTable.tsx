@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { motion } from 'framer-motion'
 
 interface LineItem {
@@ -21,12 +21,7 @@ function formatCurrency(amount: number): string {
 }
 
 function buildMonthColumns(): Array<{ label: string; index: number }> {
-  const now = new Date()
-  const currentMonth = now.getMonth() // 0-11
-  const currentYear = now.getFullYear()
-
   // Hebrew fiscal year starts in July (month index 6)
-  const startYear = currentMonth >= 6 ? currentYear : currentYear - 1
   const startMonth = 6 // July
 
   const months: Array<{ label: string; index: number }> = []

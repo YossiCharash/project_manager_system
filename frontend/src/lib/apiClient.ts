@@ -76,6 +76,11 @@ export class ProjectAPI {
         }>
       }>
     } | null
+    accepted_quote?: {
+      id: number
+      name: string
+      status: string
+    } | null
   }> {
     const params: any = periodId ? { period_id: periodId } : {}
     // Add cache busting parameter if requested

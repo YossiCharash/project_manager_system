@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import type { RootState } from '../../store'
 import {
-  Package,
   Plus,
   Search,
   ArrowLeftRight,
@@ -20,7 +19,6 @@ import {
   type CemsUser,
   type AssetCategory,
   type Warehouse,
-  type AssetStatus,
 } from '../../lib/cemsApi'
 import { StatusBadge } from './InventoryDashboard'
 

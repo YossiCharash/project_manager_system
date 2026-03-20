@@ -11,6 +11,7 @@ const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
   pending: 'מחכה לטיפול',
   in_progress: 'בטיפול',
   completed: 'טופלה',
+  pending_closure: 'ממתין לסגירה',
 }
 
 const PRESET_OPTIONS: { value: ArchivedTaskPreset; label: string }[] = [
