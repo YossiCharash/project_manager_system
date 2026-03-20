@@ -967,7 +967,7 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit: _onProj
 
       {/* Budget and Project Alerts */}
       {dashboardData && (
-        <AlertsStrip alerts={dashboardData.alerts} projects={allProjectsFlat} onProjectClick={onProjectClick} onGoToFix={(project, focus) => navigate(`/projects/${project.id}?focus=${focus}`)} />
+        <AlertsStrip alerts={dashboardData.alerts ?? { budget_overrun: [], budget_warning: [], missing_proof: [], unpaid_recurring: [], negative_fund_balance: [], category_budget_alerts: [] }} projects={allProjectsFlat} onProjectClick={onProjectClick} onGoToFix={(project, focus) => navigate(`/projects/${project.id}?focus=${focus}`)} />
       )}
 
       {/* Date Filter Options for Dashboard */}
@@ -1080,9 +1080,9 @@ export default function ModernDashboard({ onProjectClick, onProjectEdit: _onProj
         className="flex justify-center"
       >
         <SystemFinancialPieChart
-          totalIncome={dashboardData.summary.total_income}
-          totalExpense={dashboardData.summary.total_expense}
-          expenseCategories={dashboardData.expense_categories}
+          totalIncome={summary.total_income}
+          totalExpense={summary.total_expense}
+          expenseCategories={dashboardData.expense_categories ?? []}
         />
       </motion.div>
 
